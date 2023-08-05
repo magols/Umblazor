@@ -3,7 +3,7 @@ using BlazorTemplate;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents();
+builder.Services.AddRazorComponents().AddServerComponents();
 
 var app = builder.Build();
 
