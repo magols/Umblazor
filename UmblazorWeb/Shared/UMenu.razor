@@ -27,16 +27,17 @@
             if (umbracoHelper != null)
             {
               
-                var root = umbracoHelper.GetAtRoot().First();
-
-               All  = root.Descendants().ToList();
-
+                var root = umbracoHelper.GetAtRoot().FirstOrDefault();
+                if (root != null)
+                {
+                    All = root.Descendants().ToList();
+                }
 
             }
         }
     }
-
-    public List<IPublishedContent> All { get; set; }
+    
+    public List<IPublishedContent> All { get; set; } = new List<IPublishedContent>();
 
     public IPublishedContent? Model { get; set; }
 }
