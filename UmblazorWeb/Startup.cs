@@ -1,3 +1,8 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Extensions;
+
 namespace Umblazor
 {
     public class Startup
@@ -29,12 +34,26 @@ namespace Umblazor
         /// </remarks>
         public void ConfigureServices(IServiceCollection services)
         {
+
+	        services.AddControllers().AddJsonOptions(options =>
+	        {
+		        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+	        });
+
+	        services.ConfigureHttpJsonOptions(o => new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles });
+			services.AddRazorComponents().AddServerComponents();
+            
             services.AddUmbraco(_env, _config)
                 .AddBackOffice()
                 .AddWebsite()
                 .AddDeliveryApi()
                 .AddComposers()
                 .Build();
+
+            services.AddRazorPages();
+            services.AddServerSideBlazor();
+
+            services.AddScoped<JsonSerializerOptions>(o => new JsonSerializerOptions(){ReferenceHandler = ReferenceHandler.IgnoreCycles});
         }
 
         /// <summary>
@@ -43,7 +62,7 @@ namespace Umblazor
         /// <param name="app">The application builder.</param>
         /// <param name="env">The web hosting environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+        { 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -59,8 +78,21 @@ namespace Umblazor
                 {
                     u.UseInstallerEndpoints();
                     u.UseBackOfficeEndpoints();
-                    u.UseWebsiteEndpoints();
+                //    u.UseWebsiteEndpoints();
                 });
+
+
+            #region mine
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapBlazorHub();
+                endpoints.MapFallbackToPage("/_Host");
+            });
+
+       
+            #endregion
+
         }
     }
 }

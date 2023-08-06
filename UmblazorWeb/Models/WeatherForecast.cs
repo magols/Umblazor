@@ -1,4 +1,4 @@
-namespace BlazorTemplate;
+namespace UmblazorWeb.Models;
 
 public class WeatherForecast
 {

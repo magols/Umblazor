@@ -1,0 +1,42 @@
+﻿@using Umbraco.Cms.Core.Web
+@using Umbraco.Cms.Core.PublishedCache
+@using Umbraco.Cms.Core.Models.PublishedContent
+
+@foreach (var item in All)
+{
+    <div class="nav-item px-3">
+        <NavLink class="nav-link" href="@item.Url()">
+            <span class="bi bi-list-nested" aria-hidden="true"></span> @item.Name
+        </NavLink>
+    </div>
+}
+   
+ 
+
+
+@code {
+
+    [Inject]
+    IUmbracoContextFactory context{ get; set; }
+ 
+    protected override async Task OnParametersSetAsync()
+    {
+        using (var cref = context.EnsureUmbracoContext())
+        {
+            IPublishedContentCache? umbracoHelper = cref.UmbracoContext.Content;
+            if (umbracoHelper != null)
+            {
+              
+                var root = umbracoHelper.GetAtRoot().First();
+
+               All  = root.Descendants().ToList();
+
+
+            }
+        }
+    }
+
+    public List<IPublishedContent> All { get; set; }
+
+    public IPublishedContent? Model { get; set; }
+}

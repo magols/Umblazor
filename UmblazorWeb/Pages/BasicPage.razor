@@ -1,0 +1,16 @@
+﻿@using Umbraco.Cms.Core.Models.PublishedContent
+@using UmblazorWeb.ContentModels
+
+<PageTitle>@Model?.Name</PageTitle>
+
+<h1>@Model?.Heading</h1>
+
+@((MarkupString)@Model?.Summary)
+
+@code {
+ 
+  [Parameter]
+    public UmblazorWeb.ContentModels.BasicPage? Model { get; set; }
+
+
+}

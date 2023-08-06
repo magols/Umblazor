@@ -16,7 +16,7 @@ using Umbraco.Cms.Infrastructure.ModelsBuilder;
 using Umbraco.Cms.Core;
 using Umbraco.Extensions;
 
-namespace Umbblazor.PageModels
+namespace UmblazorWeb.ContentModels
 {
 	/// <summary>Video</summary>
 	[PublishedModel("umbracoMediaVideo")]

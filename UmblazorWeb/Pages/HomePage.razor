@@ -1,0 +1,18 @@
+﻿@using Umbraco.Cms.Core.Models.PublishedContent
+@using UmblazorWeb.ContentModels
+
+<PageTitle>@Model?.Name</PageTitle>
+
+<h1>@Model?.Heading</h1>
+
+@((MarkupString)@Model?.MainBody?.ToHtmlString())
+
+@code {
+ 
+  [Parameter]
+  public ContentModels.HomePage? Model { get; set; }
+ 
+
+ 
+
+}

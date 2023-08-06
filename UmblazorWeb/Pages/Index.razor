@@ -1,0 +1,42 @@
+﻿@page "/{*pageRoute}"
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Core.PublishedCache
+@using Umbraco.Cms.Core.Web
+
+@if (Model != null)
+{
+    if (Model is  ContentModels.HomePage )
+    {
+        <HomePage Model="Model as UmblazorWeb.ContentModels.HomePage"></HomePage>
+    }
+
+    if (Model is ContentModels.BasicPage)
+    {
+        <BasicPage Model="Model as UmblazorWeb.ContentModels.BasicPage"></BasicPage>
+    }
+}
+
+@code {
+
+    public IPublishedContent? Model { get; set; }
+
+    [Parameter]
+    public string? PageRoute { get; set; }
+
+ 
+    [Inject]
+    public IUmbracoContextFactory Context{ get; set; }
+ 
+    protected override async Task OnParametersSetAsync()
+    {
+        using (var cref = Context.EnsureUmbracoContext())
+        {
+            IPublishedContentCache? umbracoHelper = cref.UmbracoContext.Content;
+            if (umbracoHelper != null)
+            {
+                Model = umbracoHelper.GetByRoute(PageRoute != null ? "/" + PageRoute : "/");
+            }
+        }
+    }
+
+}
