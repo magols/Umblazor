@@ -1,19 +1,14 @@
 ﻿@page "/{*pageRoute}"
 @using Umbraco.Cms.Core.Models.PublishedContent
 @using Umbraco.Cms.Core.PublishedCache
+@using Umbraco.Cms.Core.Services
+@using Umbraco.Cms.Core.Strings;
 @using Umbraco.Cms.Core.Web
+@using Umbraco.Extensions
 
 @if (Model != null)
 {
-    if (Model is  ContentModels.HomePage )
-    {
-        <HomePage Model="Model as UmblazorWeb.ContentModels.HomePage"></HomePage>
-    }
-
-    if (Model is ContentModels.BasicPage)
-    {
-        <BasicPage Model="Model as UmblazorWeb.ContentModels.BasicPage"></BasicPage>
-    }
+    @RenderComponent(Model.ContentType.Alias, Model)
 }
 
 @code {
@@ -23,20 +18,54 @@
     [Parameter]
     public string? PageRoute { get; set; }
 
- 
     [Inject]
-    public IUmbracoContextFactory Context{ get; set; }
- 
+    public IUmbracoContextFactory? Context { get; set; }
+
+    [Inject]
+    public IContentTypeService? ContentTypeService { get; set; }
+
     protected override async Task OnParametersSetAsync()
     {
-        using (var cref = Context.EnsureUmbracoContext())
+        if (Context == null) return;
+        using var cref = Context.EnsureUmbracoContext();
+        IPublishedContentCache? contentCache = cref.UmbracoContext.Content;
+        if (contentCache != null)
         {
-            IPublishedContentCache? umbracoHelper = cref.UmbracoContext.Content;
-            if (umbracoHelper != null)
-            {
-                Model = umbracoHelper.GetByRoute(PageRoute != null ? "/" + PageRoute : "/");
-            }
+            Model = contentCache.GetByRoute(PageRoute != null ? "/" + PageRoute : "/");
         }
+    }
+
+    [Inject]
+    public IShortStringHelper? ShortStringHelper { get; set; }
+
+    private RenderFragment RenderComponent(string componentName, IPublishedContent model)
+    {
+        // split the content type alias into parts to modiy casing as Razor component names cannot start with lowercase
+        // Umbraco aliases are often camelCased
+        var parts = componentName.SplitPascalCasing(ShortStringHelper!)
+            .Split(" ")
+            .Select(p => p.ToFirstUpper());
+        // combine the parts to get the component name
+        componentName = string.Join("", parts);
+
+       // render a razor component based on the content type alias
+        var componentType = Type.GetType($"UmblazorWeb.Pages.{componentName}");
+        if (componentType != null)
+        {
+            return builder =>
+            {
+                builder.OpenComponent(0, componentType);
+                builder.AddAttribute(1, "Model", model);
+                builder.CloseComponent();
+            };
+        }
+
+        return builder =>
+        {
+            builder.OpenElement(0, "div");
+            builder.AddContent(1, $"Component {componentName} not found");
+            builder.CloseElement();
+        };
     }
 
 }
