@@ -7,7 +7,9 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <ClientCounter IncrementAmount="2" @rendermode="@RenderMode.WebAssembly" />
+            @* <ClientCounterInServerProject IncrementAmount="2" @rendermode="@RenderMode.WebAssembly" /> *@
+
         </div>
 
         <article class="content px-4">

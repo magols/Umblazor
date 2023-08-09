@@ -6,7 +6,7 @@
 
 <h1>Weather forecast</h1>
 
-<p>This component demonstrates showing data from the server.</p>
+<p>This component demonstrates showing data from the server with an intentional delay of 3 seconds.</p>
 
 @if (forecasts == null)
 {
@@ -48,7 +48,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         // Simulate retrieving the data asynchronously.
-        await Task.Delay(1000);
+        await Task.Delay(3000);
 
         var startDate = DateOnly.FromDateTime(DateTime.Now);
         forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast

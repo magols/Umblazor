@@ -1,5 +1,23 @@
-﻿@using UmblazorWeb.Shared
- 
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UmblazorWeb</title>
+    <base href="/" />
+    
+    
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap-icons/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/png" href="favicon.ico" />
+    <link rel="stylesheet" href="UmblazorWeb.styles.css" />
+
+    <link href="app.css" rel="stylesheet" />
+    <HeadOutlet />
+
+</head>
+<body>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -13,3 +31,27 @@
         </NotFound>
     </Router>
  
+<div id="blazor-error-ui">
+    @if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
+    {
+            <div>
+                An error has occurred. This application may no longer respond until reloaded
+
+            </div>
+
+    } else
+    {
+        <div>
+            An error has occurred. This application may no longer respond until reloaded
+            <a href="" class="reload">Reload</a>
+            <a class="dismiss">🗙</a>
+        </div>
+    }
+ 
+</div>
+
+<script src="_framework/blazor.web.js"></script>
+
+  
+</body>
+</html>

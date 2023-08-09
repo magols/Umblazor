@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using UmblazorWeb;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
 
@@ -41,7 +42,10 @@ namespace Umblazor
 	        });
 
 	        services.ConfigureHttpJsonOptions(o => new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles });
-			services.AddRazorComponents().AddServerComponents();
+			
+            services.AddRazorComponents()
+                 .AddServerComponents()
+                .AddWebAssemblyComponents();
             
             services.AddUmbraco(_env, _config)
                 .AddBackOffice()
@@ -49,11 +53,6 @@ namespace Umblazor
                 .AddDeliveryApi()
                 .AddComposers()
                 .Build();
-
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
-
-            services.AddScoped<JsonSerializerOptions>(o => new JsonSerializerOptions(){ReferenceHandler = ReferenceHandler.IgnoreCycles});
         }
 
         /// <summary>
@@ -72,7 +71,7 @@ namespace Umblazor
                 .WithMiddleware(u =>
                 {
                     u.UseBackOffice();
-                    u.UseWebsite();
+               //     u.UseWebsite();
                 })
                 .WithEndpoints(u =>
                 {
@@ -84,13 +83,16 @@ namespace Umblazor
 
             #region mine
             app.UseRouting();
+            app.UseAntiforgery();
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapBlazorHub();
-                endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapRazorComponents<App>()
+                      .AddWebAssemblyRenderMode()
+                      .AddServerRenderMode();
             });
 
-       
+
             #endregion
 
         }
